@@ -1,1 +1,2 @@
-tux-mai02.inverso.local
+[web_servers]
+tux-mai02.inverso.local httpd_state=present apache_packages='["httpd","php"]'

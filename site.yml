@@ -1,0 +1,29 @@
+---
+
+- hosts: all
+  become: true
+  pre_tasks:  #Pre-tasks: these tasks would be run first
+
+  - name: install updates (CentOS)
+    tags: always
+    yum:
+      update_only: yes
+      update_cache: yes
+    when: ansible_distribution == "CentOS"
+
+- hosts: web_servers
+  become: true
+  tasks:
+
+  - name: install httpd and php package
+    tags: centos, httpd
+    yum:
+      name:
+        - httpd
+        - php
+   # package:
+     # name:         
+       # - "{{ apache_package }}"
+       # - "{{ php_package }}
+      state: latest
+    when: ansible_distribution == "CentOS"
