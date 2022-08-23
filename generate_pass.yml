@@ -3,22 +3,17 @@
 - hosts: tux-mai02.inverso.local
   become: true
   tasks:
+
   - name: install httpd and php package
     package:
       name: "{{ apache_packages }}"
       state: "{{ httpd_state }}"
       update_cache: yes
+
     register: _status_httpd_run
-    when: 
+    when:
       - ansible_distribution == "CentOS"
-  - name: copy default html file for site
-    tags: httpd
-    copy:
-      src: default_site.html
-      dest: /var/www/html/index.html
-      owner: root
-      group: root
-      mode: 0644
   - name: show me the result
     debug:
       var: _status_httpd_run
+
