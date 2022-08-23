@@ -1,0 +1,6 @@
+- name: add ssh key for simone
+  tags: always
+  authorized_key:
+    user: simone
+    key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIISH+Nk3k6VVZ2N1kQ+Kis7SZzHRtNWjDE1KkOtneLHe ansible"
+

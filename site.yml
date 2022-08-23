@@ -1,82 +1,32 @@
 ---
 
+#- hosts: all
+#  become: true
+#  pre_tasks:
+
+#  - name: update repository index (CentOS)
+#    tags: always
+#    yum:
+#      update_cache: yes
+#    changed_when: false
+#    when: ansible_distribution == "CentOS"
+
 - hosts: all
   become: true
-  pre_tasks:  #Pre-tasks: these tasks would be run first
-
-  - name: Update repo cache (CentOS)
-    tags: always
-    yum:
-      update_cache: yes
-    changed_when: false  # only updates if there's any change in the update
-    when: ansible_distribution == "CentOS"
+  roles:
+    - base
 
 - hosts: web_servers
   become: true
-  tasks:
+  roles: 
+    - web_servers
 
-  - name: install httpd and php package
-    tags: centos, httpd
-    yum:
-      name:
-        - httpd
-        - php
-      state: latest
-    when: ansible_distribution == "CentOS"
-
-  - name: start httpd
-    tags: apache httpd
-    service:
-      name: httpd
-      state: started
-      enabled: yes
-    when: ansible_distribution == "CentOS"
-
-  - name: change e-mail address for admin mai02
-    tags: apache, httpd
-    lineinfile:
-      path: /etc/httpd/conf/httpd.conf
-      regexp: '^ServerAdmin'
-      line: ServerAdmin root@localhost    # change the email line here
-    when: ansible_distribution == "CentOS"
-    register: httpd
-  - name: restart httpd (CentOS)
-    tags: apache, httpd
-    service:
-      name: httpd
-      state: restarted
-    when: httpd.changed
-
-  - name: copy default html file for site
-    tags: httpd, apache
-    copy:
-      src: default_site.html
-      dest: /var/www/html/index.html
-      owner: root
-      group: root
-
-      mode: 0644
 - hosts: all
   become: true
-  tasks:
-
-  - name: add ssh key for simone
-    tags: always
-    authorized_key:
-      user: simone
-      key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIISH+Nk3k6VVZ2N1kQ+Kis7SZzHRtNWjDE1KkOtneLHe ansible"
+  roles:
+    - base
 
 #- hosts: workstations
-#  become: true
- # tasks:
-  #- name: install unzip
-   # package:
-    #  name: unzip
- # - name: install terraform
-  #  unarchive:
-   #   src: https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo
-    #  dest: /usr/local/bin
-     # remote_src: yes
-     # mode: 0755
-      #owner: root
-     # group: root
+#   become: true
+#   roles:
+#     - workstations 
