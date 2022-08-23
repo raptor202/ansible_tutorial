@@ -4,11 +4,11 @@
   become: true
   pre_tasks:  #Pre-tasks: these tasks would be run first
 
-  - name: Update repo cache (CentOS)
+  - name: install updates (CentOS)
     tags: always
     yum:
+      update_only: yes
       update_cache: yes
-    changed_when: false  # only updates if there's any change in the update
     when: ansible_distribution == "CentOS"
 
 - hosts: web_servers
@@ -59,6 +59,11 @@
 - hosts: all
   become: true
   tasks:
+  - name: create a new user simone on each server
+    tags: always
+    user:
+      name: simone
+      groups: root
 
   - name: add ssh key for simone
     tags: always
@@ -66,17 +71,12 @@
       user: simone
       key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIISH+Nk3k6VVZ2N1kQ+Kis7SZzHRtNWjDE1KkOtneLHe ansible"
 
-#- hosts: workstations
-#  become: true
- # tasks:
-  #- name: install unzip
-   # package:
-    #  name: unzip
- # - name: install terraform
-  #  unarchive:
-   #   src: https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo
-    #  dest: /usr/local/bin
-     # remote_src: yes
-     # mode: 0755
-      #owner: root
-     # group: root
+  - name: add sudoers file for simone
+    tags: always
+    copy:
+      src: sudoer_simone
+      dest: /etc/sudoers.d/simone
+      owner: root
+      group: root
+      mode: 0440
+

@@ -1,2 +1,4 @@
 [web_servers]
 tux-mai02.inverso.local httpd_state=present apache_packages='["httpd","php"]'
+[workstations]
+tux-mai01.inverso.local
