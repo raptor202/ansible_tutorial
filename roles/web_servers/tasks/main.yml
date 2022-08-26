@@ -2,18 +2,16 @@
   tags: centos, httpd
   yum:
     name:
-      - httpd
-      - php
-    state: latest
-  when: ansible_distribution == "CentOS"
+      - "{{ apache_package_name }}"
+      - "{{ php_package_name }}"
+    state: present
 
 - name: start and enable httpd
   tags: apache httpd
   service:
-    name: httpd
+    name: "{{ apache_service }}"
     state: started
     enabled: yes
-  when: ansible_distribution == "CentOS"
 
 - name: change e-mail address for admin mai02
   tags: apache, httpd
@@ -22,13 +20,15 @@
     regexp: '^ServerAdmin'
     line: ServerAdmin root@localhost    # change the email line here
   when: ansible_distribution == "CentOS"
-  register: httpd
-- name: restart httpd (CentOS)
-  tags: apache, httpd
-  service:
-    name: httpd
-    state: restarted
-  when: httpd.changed
+  notify: restart_apache
+#  register: httpd
+
+#- name: restart httpd (CentOS)
+#  tags: apache, httpd
+#  service:
+#    name: "{{ apache_service }}"
+#    state: restarted
+#  when: httpd.changed
 
 - name: copy default html file for site
   tags: httpd, apache
